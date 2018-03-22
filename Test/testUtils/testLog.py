@@ -6,4 +6,10 @@ import utils.log.logEvent as log
 @log.LogEvent("Test")
 def testLog_type():
     print("--fucking testing---")
-testLog_type()
+
+#testing logExcept
+@log.LogExcept
+@log.LogEvent("Test")
+def testLog_error():
+    raise IOError,"-----fucking you-----"
+testLog_error()

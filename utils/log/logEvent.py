@@ -18,5 +18,17 @@ def LogEvent(type):
                 print("--kw:null--")
             f(*args, **kw)
         return innerLog
-
     return logType
+# log error of running func
+def LogExcept(f):
+    def innerLog(*args,**kw):
+        try:
+            f()
+        except NameError,error:
+            print error
+        except :
+            print "something goes wrong"
+        else:
+            if len(args)>1:
+                print args[1],"\thandle success"
+    return innerLog
