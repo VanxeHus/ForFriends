@@ -5,28 +5,30 @@ import struct
 import threading
 import utils.log.logEvent as log
 import utils.config.SocketConfig as sCon
+from Controller import MainController
 
-
+@log.LogExcept
 @log.LogEvent('DEBUG')
-def handle(newSocket, addr):
-    dataBuf=''
+def handle(sck, addr):
+    dataBuf = ''
     while True:
-        dataBuf += newSocket.recv(1024)
-        #若达到包头长度则处理
+        dataBuf += sck.recv(1024)
+        # 若达到包头长度则处理
         if len(dataBuf) >= sCon.HEADER_SIZE:
-            #读包头
-            header = struct.unpack('>I', dataBuf[:sCon.HEADER_SIZE])
-            #若达到body长度则处理
+            # 读包头
+            header = struct.unpack('>I4s', dataBuf[:sCon.HEADER_SIZE])
+            # 若达到body长度则处理
             if len(dataBuf) >= sCon.HEADER_SIZE + header[0]:
                 body = dataBuf[sCon.HEADER_SIZE:sCon.HEADER_SIZE + header[0]]
-                # passHandle
+                # 数据包字典
+                data = {"header": header, "body": body}
+                MainController.GetInstance().Handle(sck, addr, data)
+                # 抛弃已经处理完的数据包
                 dataBuf = dataBuf[sCon.HEADER_SIZE + header[0]:]
             else:
-                print("body's len is:%s not enough"%(len(dataBuf) - sCon.HEADER_SIZE))
-                pass
+                raise NameError, "body's len is:%s not enough" % (len(dataBuf) - sCon.HEADER_SIZE)
         else:
-            print("data'len is:%s not enough"%len(dataBuf))
-            pass
+            raise NameError, "data'len is:%s not enough" % len(dataBuf)
 
 
 def Main():
@@ -38,7 +40,7 @@ def Main():
     while True:
         print("----fucking listening----")
         newSck, addr = s.accept()
-        threading._start_new_thread(handle, (newSck,addr))
+        threading._start_new_thread(handle, (newSck, addr))
         sckDist[addr] = newSck
 
 
