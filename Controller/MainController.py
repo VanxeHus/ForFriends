@@ -15,9 +15,9 @@ class MainController:
         if not (data.has_key("header") or data.has_key("body")):
             raise NameError, "data.header or data.body is null"
         if self.cMap.has_key(data["header"][1]):
-            self.cMap[data.header[1]]().Handle(sck, addr, data)
+            self.cMap[data["header"][1]]().Handle(sck, addr, data)
         else:
-            self.cMap["400"]().Handle(sck, addr, data)
+            self.cMap["404"]().Handle(sck, addr, data)
 
     # 注册子controller
     def RigistController(self, key, type):
@@ -28,7 +28,7 @@ class MainController:
 #注册子controller
 def regist():
     mainController.RigistController("USER", Login.LoginController)
-    mainController.RigistController("File", File.FileController)
+    mainController.RigistController("FILE", File.FileController)
     mainController.RigistController("404", Notfind.NotfindController)
 # 获取全局唯一的mainController
 def GetInstance():

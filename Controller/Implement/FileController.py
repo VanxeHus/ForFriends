@@ -3,5 +3,7 @@
 class FileController:
     def __init__(self):
         pass
-    def Handle(self):
+    def Handle(self,sck,addr,data):
+        print "this is File controller"
+        print data
         pass
