@@ -35,12 +35,14 @@ class MysqlManager:
         # 插入新用户
         conn = self.mysqlPool.connection()
         cur = conn.cursor()
-        instStr = "insert into user values(%s,%s,%s)"
+        instStr = "insert into user(user,password,privilege,salt) values(%s,%s,%s,%s)"
         res = {"res": True, "reason": ""}
         if params:
             try:
                 cur.execute(instStr, params)
                 conn.commit()
+                res["res"]=True
+                res["reason"]="insert success"
             except:
                 conn.rollback()
                 res["res"] = False
