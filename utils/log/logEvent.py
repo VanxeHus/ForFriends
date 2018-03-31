@@ -22,12 +22,13 @@ def LogEvent(type):
 # log error of running func
 def LogExcept(f):
     def innerLog(*args,**kw):
+        print "----",f.__name__
         try:
-            f()
+            f(*args,**kw)
         except NameError,error:
             print error
-        except :
-            print "something goes wrong"
+        except OSError,error:
+            print error
         else:
             if len(args)>1:
                 print args[1],"\thandle success"
