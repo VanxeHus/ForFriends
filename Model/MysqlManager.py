@@ -22,14 +22,17 @@ class MysqlManager:
         cur = conn.cursor()
         selcStr = "Select * from user where user=%s"
 
+        resM={}
         if userName:
             cur.execute(selcStr, userName)
             res = cur.fetchone()
-        else:
-            res = None
+            resM["User"]=res[0]
+            resM["Pwd"]=res[1]
+            resM["Pri"]=res[2]
+            resM["Salt"]=res[3]
         cur.close()
         conn.close()
-        return res
+        return resM
 
     def insertUser(self, params):
         # 插入新用户

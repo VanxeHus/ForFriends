@@ -80,10 +80,13 @@ class Provider:
         self.Sessions = {}
     #创建一个新的session
     def SessionInit(self, sid,values):
+        sess=None
         if self.lock.acquire():
             self.Sessions[sid] = SessionStorage(sid,values)
             print sid+" created"
+            sess=self.Sessions[sid]
             self.lock.release()
+        return sess
     #从dict里面读取一个session
     def SessionRead(self, sid):
         sess=None
