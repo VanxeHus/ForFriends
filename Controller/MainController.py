@@ -12,10 +12,10 @@ class MainController:
     # 分发数据包到各个子controller
     # data包括header和body
     def Handle(self, sck, addr, data):
-        if not (data.has_key("header") or data.has_key("body")):
-            raise NameError, "data.header or data.body is null"
-        if self.cMap.has_key(data["header"][1]):
-            self.cMap[data["header"][1]]().Handle(sck, addr, data)
+        if not (data.has_key("Header") or data.has_key("Body")):
+            raise NameError, "data.Header or data.Body is null"
+        if self.cMap.has_key(data["Header"][1]):
+            self.cMap[data["Header"][1]]().Handle(sck, addr, data)
         else:
             self.cMap["404"]().Handle(sck, addr, data)
 

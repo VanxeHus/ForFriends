@@ -14,9 +14,9 @@ class FileController:
         pass
     @logEvent.LogEvent("FileHandle")
     def Handle(self,sck,addr,data):
-        body=data["body"]
+        body=data["Body"]
         #获取session
-        sess=SessionManager.GetInstance().SessionStart(None,body["sid"])
+        sess=SessionManager.GetInstance().SessionStart(None,body["Sid"])
 
         #结果
         resCode=""
@@ -36,12 +36,12 @@ class FileController:
                 resReason="%s\t\n"%ret
             else:
                 resCode="200\t\n"
-                resReason="ReadFile success"
+                resReason="ReadFile success\t\n"
                 params="files:%s"%ret
 
         #发送数据
         headerLen=resCode.__len__()+resReason.__len__()+params.__len__()
-        headerPack=struct.pack(">I4s",headerLen,"File")
+        headerPack=struct.pack(">I4s",headerLen,"FILE")
         sck.send(headerPack)
         sck.send(resCode + resReason + params)
         # print "resCode:",resCode

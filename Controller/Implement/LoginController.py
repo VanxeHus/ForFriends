@@ -19,7 +19,7 @@ class LoginController:
         resCode = ""
         resReason = ""
         params = ""
-        body = data["body"]
+        body = data["Body"]
         # 处理
         if body is {}:
             resCode = "400\t\n"
@@ -42,7 +42,7 @@ class LoginController:
                     resReason = "Login success\t\n"
                     # 读取视频文件列表
                     fileList = FileReader.InitFile_list()
-                    params = "sid:%s\t\nfile:%s" % sess.SessionId() % fileList
+                    params = "sid:%s\t\nfile:%s" % (sess.SessionId(), fileList)
                 else:
                     resCode = "500\t\n"
                     resReason = "Session create fail\t\n"
@@ -51,6 +51,8 @@ class LoginController:
         headerPack = struct.pack(">I4s", headerLen, "USER")
         sck.send(headerPack)
         sck.send(resCode + resReason + params)
+        print "resCode:%sresReason:%sparams:%s" % (resCode, resReason, params)
+        print "headerlen:%s" % headerLen
         # print "resCode:",resCode
         # print "resReason:",resReason
         # print "params:",params
