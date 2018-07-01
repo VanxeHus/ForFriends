@@ -26,10 +26,11 @@ class MysqlManager:
         if userName:
             cur.execute(selcStr, userName)
             res = cur.fetchone()
-            resM["User"]=res[0]
-            resM["Pwd"]=res[1]
-            resM["Pri"]=res[2]
-            resM["Salt"]=res[3]
+            if res:
+                resM["User"]=res[0]
+                resM["Pwd"]=res[1]
+                resM["Pri"]=res[2]
+                resM["Salt"]=res[3]
         cur.close()
         conn.close()
         return resM

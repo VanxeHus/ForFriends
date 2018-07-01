@@ -1,13 +1,12 @@
 #!usr/bin/python
 #coding=utf-8
 import threading
-
 import binascii
 import os
-
 import schedule
 import time
-from utils.config import SessionConfig
+from utils.config import SessionConfig as sessCon
+from utils.log import logEvent
 #session管理器
 class Manager:
     def __init__(self, provider, time):
@@ -44,13 +43,11 @@ class Manager:
 
     # 定时器,定时销毁长期不用的session
     def TD(self):
-        schedule.every(self.time).seconds.do(test)
-        schedule.every(self.time).seconds.do(self.lock.acquire)
-        schedule.every(self.time).seconds.do(test)
-        schedule.every(self.time).seconds.do(self.provider.TD, self.time)
-        schedule.every(self.time).seconds.do(self.lock.release)
         while True:
-            schedule.run_pending()
+            if self.lock.acquire():
+                self.provider.TD(self.time)
+                self.lock.release()
+            time.sleep(self.time)
 # 内存session结构
 class SessionStorage:
     #新的session
@@ -79,6 +76,7 @@ class Provider:
         self.lock = threading.Lock()
         self.Sessions = {}
     #创建一个新的session
+    @logEvent.LogEvent("SessionManager")
     def SessionInit(self, sid,values):
         sess=None
         if self.lock.acquire():
@@ -103,6 +101,7 @@ class Provider:
                 del self.Sessions[sid]
             self.lock.release()
     #定时器,定时销毁长期不用的session
+    @logEvent.LogEvent("SessionManager")
     def TD(self, maxtime):
         if self.lock.acquire():
             for key in list(self.Sessions):
@@ -111,11 +110,8 @@ class Provider:
                     self.Sessions.pop(key)
             self.lock.release()
         return
-
-def test():
-    print "test"
 memoryProvider=Provider()
-manager=Manager(memoryProvider,SessionConfig.maxTime)
+manager=Manager(memoryProvider,sessCon.maxTime)
 def GetInstance():
     #获取全局唯一的manager
     global manager
@@ -126,5 +122,5 @@ def GetInstance():
         pass
     else:
         memoryProvider = Provider()
-    manager = Manager(memoryProvider, SessionConfig.maxTime)
+    manager = Manager(memoryProvider, sessCon.maxTime)
     return manager

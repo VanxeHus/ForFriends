@@ -14,6 +14,7 @@ class LoginController:
     def __init__(self):
         pass
 
+    @logEvent.LogExcept
     @logEvent.LogEvent("LoginHandle")
     def Handle(self, sck, addr, data):
         resCode = ""
@@ -42,7 +43,7 @@ class LoginController:
                     resReason = "Login success\t\n"
                     # 读取视频文件列表
                     fileList = FileReader.InitFile_list()
-                    params = "sid:%s\t\nfile:%s" % (sess.SessionId(), fileList)
+                    params = "sid:%s\t\n%s" % (sess.SessionId(), fileList)
                 else:
                     resCode = "500\t\n"
                     resReason = "Session create fail\t\n"
@@ -52,7 +53,8 @@ class LoginController:
         sck.send(headerPack)
         sck.send(resCode + resReason + params)
         print "resCode:%sresReason:%sparams:%s" % (resCode, resReason, params)
-        print "headerlen:%s" % headerLen
+        return
+        #print "headerlen:%s" % headerLen
         # print "resCode:",resCode
         # print "resReason:",resReason
         # print "params:",params

@@ -28,16 +28,16 @@ class FileController:
             resReason="Unauthorized\t\n"
         else:
             ret=FileReader.ReadFile(body["File"])
-            if ret[:4]=="play ":
-                if ret[5:]=="success":
+            if ret[5:10]=="play ":
+                if ret[10:]=="success":
                     resCode="200\t\n"
                 else:
                     resCode="500\t\n"
                 resReason="%s\t\n"%ret
             else:
-                resCode="200\t\n"
+                resCode="201\t\n"
                 resReason="ReadFile success\t\n"
-                params="files:%s"%ret
+                params="%s"%ret
 
         #发送数据
         headerLen=resCode.__len__()+resReason.__len__()+params.__len__()
